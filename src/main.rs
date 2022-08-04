@@ -15,6 +15,7 @@ mod download_image;
 mod get_images;
 mod search_movie;
 mod structs;
+mod movie_movie_id;
 
 #[tokio::main]
 async fn main() {

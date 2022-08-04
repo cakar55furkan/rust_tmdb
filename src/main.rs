@@ -3,10 +3,6 @@ use std::fs::{create_dir, File};
 use std::path::Path;
 use futures::TryFutureExt;
 use std::env;
-mod download_image;
-mod get_images;
-mod search_movie;
-mod structs;
 use crate::get_images::download_all_images_by_id;
 use crate::search_movie::search_movie;
 use crate::structs::{SearchMovie, SearchMovieResultObject};
@@ -15,6 +11,10 @@ use sqlx;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Connection, PgConnection, Postgres};
 use termion::color;
+mod download_image;
+mod get_images;
+mod search_movie;
+mod structs;
 
 #[tokio::main]
 async fn main() {

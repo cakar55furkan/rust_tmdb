@@ -1,4 +1,3 @@
-use crate::structs::MovieMovieId;
 use image::{load_from_memory, DynamicImage, ImageDecoder, ImageError};
 
 pub(crate) async fn download_image(image_location: &str, folder_path: &str, width: &str) {

@@ -13,6 +13,7 @@ use sqlx;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Connection, PgConnection, Postgres};
 use termion::color;
+use crate::database_functions::execute_query_without_return::insert_movie_to_movie_table;
 use crate::movie_credist::movie_credits::get_movie_credits;
 use crate::movie_credist::movie_credits_structs::movie_credits;
 
@@ -62,29 +63,10 @@ async fn main() {
     */
 
 
-    let rte = movie_movie_id::get_movie::get_movie_details(search_results.results[0].id.to_string()).await;
+    let mut rte = movie_movie_id::get_movie::get_movie_details(search_results.results[0].id.to_string()).await;
 
-    let mut my_query = format!("insert into movie values ('{}',{},{},{},'{}','{}','{}','{}',{},'{}','{}',{},'{}','{}',{},{})",
-                               rte.backdrop_path,
-                               rte.adult,
-                               rte.budget,
-                               rte.id,
-                               rte.imdb_id,
-                               rte.original_language,
-                               rte.original_title,
-                               rte.overview.replace("\'", "\'\'").replace("\"", "\"\""),
-                               rte.popularity,
-                               rte.poster_path,
-                               rte.release_date,
-                               rte.runtime,
-                               rte.tagline.unwrap_or("".parse().unwrap()).replace("\'", "\'\'").replace("\"", "\"\""),
-                               rte.title,
-                               rte.vote_average.unwrap_or("0.0".parse().unwrap()),
-                               rte.vote_count.unwrap_or(0)
-    );
+    insert_movie_to_movie_table(&mut rte, &mut conn).await;
 
-
-    database_functions::execute_query_without_return::execute_query(&mut my_query, &mut conn).await;
     let credits = get_movie_credits(rte.id.to_string()).await;
 
     for n in 1..10 //credits.cast.len()

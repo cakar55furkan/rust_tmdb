@@ -72,10 +72,10 @@ async fn main() {
                                rte.poster_path,
                                rte.release_date,
                                rte.runtime,
-                               rte.tagline.unwrap(),
+                               rte.tagline.unwrap_or("".parse().unwrap()),
                                rte.title,
-                               rte.vote_average.unwrap(),
-                               rte.vote_count.unwrap()
+                               rte.vote_average.unwrap_or("0.0".parse().unwrap()),
+                               rte.vote_count.unwrap_or(0)
     );
 
     database_functions::execute_query_without_return::execute_query(&mut my_query, &mut conn).await;

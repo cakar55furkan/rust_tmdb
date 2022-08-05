@@ -10,8 +10,9 @@ pub async fn execute_query(passed_query: &str, conn:&mut PgConnection) -> bool{
                 println!("Inserted successfully!\nAffected rows:{}", query_result.rows_affected());
                 return true
             },
-        Err(_) => {
+        Err(e) => {
             println!("Couldn't insert to database!");
+            println!("{:?}",e);
             return false
         }
     }

@@ -5,8 +5,14 @@ pub async fn execute_query(passed_query: &str, conn:&mut PgConnection) -> bool{
     let executable = sqlx::query(passed_query)
         .execute(conn).await;
     match executable {
-        Ok(_) => println!("ok"),
-        Err(_) => println!("error")
+        Ok(query_result) =>
+            {
+                println!("Inserted successfully!\nAffected rows:{}", query_result.rows_affected());
+                return true
+            },
+        Err(_) => {
+            println!("Couldn't insert to database!");
+            return false
+        }
     }
-    true
 }

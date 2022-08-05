@@ -5,7 +5,6 @@ pub(crate) async fn get_movie_details(movie_tmdb_id: String) -> MovieMovieId {
     movie_url.push_str(&*movie_tmdb_id.replace(" ", "%20"));
     movie_url.push_str("&?api_key=4e110fd06d91f1f01af5acd9fa42a82d&language=en-US");
 
-    println!("!!!!!-----1!!!!!!{}", movie_url);
     let get_movie_result: MovieMovieId = reqwest::Client::new()
         .get(movie_url)
         .send()

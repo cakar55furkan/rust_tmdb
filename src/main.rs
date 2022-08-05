@@ -52,8 +52,7 @@ async fn main() {
         .await
         .unwrap();
 
-
-    database_functions::execute_query( "insert into title_ratings values ('55', 31.31, 31)", &mut conn).await;
+    ///database_functions::execute_query( "insert into title_ratings values ('34', 31.31, 31)", &mut conn).await;
 
     let imdb_rating = sqlx::query!("select tconst, numvotes from title_ratings where tconst = 'tt0001963'")
         .fetch_all(&mut conn).await;
@@ -62,11 +61,9 @@ async fn main() {
         println!("{:?}", rec[0])
     }
 
-
     print!("{}", color::Fg(color::LightWhite));
     let rte = movie_movie_id::get_movie::get_movie_details(search_results.results[0].id.to_string()).await;
     println!("{:?}", rte);
-
 
     
 /*    

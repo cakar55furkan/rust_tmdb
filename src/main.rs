@@ -1,8 +1,10 @@
+use string_builder::Builder;
 use reqwest;
 use std::fs::{create_dir, File};
 use std::path::Path;
 use futures::TryFutureExt;
 use std::env;
+use std::fmt::format;
 use crate::get_images::download_all_images_by_id;
 use crate::search_movie::search_movie;
 use crate::search_movie_structs::{SearchMovie, SearchMovieResultObject};
@@ -11,6 +13,7 @@ use sqlx;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Connection, PgConnection, Postgres};
 use termion::color;
+
 mod download_image;
 mod get_images;
 mod search_movie;
@@ -37,34 +40,45 @@ async fn main() {
 
     for search_result in search_results.results.iter() {
         print!("{}", color::Fg(color::LightWhite));
+        println!("TMDB ID:\t{}", search_result.id);
         println!("Original Title:\t{}", search_result.original_title);
-        println!("Popularity:\t{}", search_result.popularity);
-        match &search_result.release_date {
-            Some(success) => println!("Release Date:\t{}", success),
-            None => println!("Release Date:\tNOT FOUND!"),
-        }
-        println!("Vote Count:\t{}", search_result.vote_count);
-        print!("{}", color::Fg(color::LightRed));
         println!("------------------------------------------------");
     }
     
     let mut conn = PgConnection::connect("postgres://furkancakar:123456@0.0.0.0:5432/furkancakar")
         .await
         .unwrap();
-
-    ///database_functions::execute_query( "insert into title_ratings values ('34', 31.31, 31)", &mut conn).await;
-
+    /*
     let imdb_rating = sqlx::query!("select tconst, numvotes from title_ratings where tconst = 'tt0001963'")
         .fetch_all(&mut conn).await;
 
     for rec in imdb_rating{
         println!("{:?}", rec[0])
     }
+    */
 
-    print!("{}", color::Fg(color::LightWhite));
+
     let rte = movie_movie_id::get_movie::get_movie_details(search_results.results[0].id.to_string()).await;
-    println!("{:?}", rte);
+    let mut my_query = format!("insert into movie values ('{}',{},{},{},'{}','{}','{}','{}',{},'{}','{}',{},'{}','{}',{},{})",
+                               rte.backdrop_path,
+                               rte.adult,
+                               rte.budget,
+                               rte.id,
+                               rte.imdb_id,
+                               rte.original_language,
+                               rte.original_title,
+                               rte.overview,
+                               rte.popularity,
+                               rte.poster_path,
+                               rte.release_date,
+                               rte.runtime,
+                               rte.tagline.unwrap(),
+                               rte.title,
+                               rte.vote_average.unwrap(),
+                               rte.vote_count.unwrap()
+    );
 
+    database_functions::execute_query_without_return::execute_query(&mut my_query, &mut conn).await;
     
 /*    
     let all_images_of_movie = download_all_images_by_id(&search_results.results[0].id.to_string()).await;

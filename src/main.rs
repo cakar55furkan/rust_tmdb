@@ -59,6 +59,7 @@ async fn main() {
 
 
     let rte = movie_movie_id::get_movie::get_movie_details(search_results.results[0].id.to_string()).await;
+
     let mut my_query = format!("insert into movie values ('{}',{},{},{},'{}','{}','{}','{}',{},'{}','{}',{},'{}','{}',{},{})",
                                rte.backdrop_path,
                                rte.adult,
@@ -67,17 +68,17 @@ async fn main() {
                                rte.imdb_id,
                                rte.original_language,
                                rte.original_title,
-                               rte.overview,
+                               rte.overview.replace("\'", "\'\'"),
                                rte.popularity,
                                rte.poster_path,
                                rte.release_date,
                                rte.runtime,
-                               rte.tagline.unwrap_or("".parse().unwrap()),
+                               rte.tagline.unwrap_or("".parse().unwrap()).replace("\'", "\\\'"),
                                rte.title,
                                rte.vote_average.unwrap_or("0.0".parse().unwrap()),
                                rte.vote_count.unwrap_or(0)
     );
-
+    //println!("{}", my_query);
     database_functions::execute_query_without_return::execute_query(&mut my_query, &mut conn).await;
     
 /*    

@@ -1,4 +1,4 @@
-use crate::structs::MovieGetImage;
+use crate::search_movie_structs::MovieGetImage;
 
 pub async fn download_all_images_by_id(movie_id:&str) -> MovieGetImage {
     let mut url = String::from("https://api.themoviedb.org/3/movie/");

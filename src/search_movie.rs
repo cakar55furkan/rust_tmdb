@@ -1,4 +1,4 @@
-use crate::structs::SearchMovie;
+use crate::search_movie_structs::SearchMovie;
 
 pub(crate) async fn search_movie(search_query: String) -> SearchMovie {
     let mut movie_url = String::from("https://api.themoviedb.org/3/search/movie?api_key=4e110fd06d91f1f01af5acd9fa42a82d&language=en-US&query=");

@@ -5,7 +5,7 @@ use futures::TryFutureExt;
 use std::env;
 use crate::get_images::download_all_images_by_id;
 use crate::search_movie::search_movie;
-use crate::structs::{SearchMovie, SearchMovieResultObject};
+use crate::search_movie_structs::{SearchMovie, SearchMovieResultObject};
 use serde::Deserialize;
 use sqlx;
 use sqlx::postgres::PgPoolOptions;
@@ -14,7 +14,7 @@ use termion::color;
 mod download_image;
 mod get_images;
 mod search_movie;
-mod structs;
+mod search_movie_structs;
 mod movie_movie_id;
 
 #[tokio::main]
@@ -46,8 +46,6 @@ async fn main() {
         print!("{}", color::Fg(color::LightRed));
         println!("------------------------------------------------");
     }
-
-
     
     let mut conn = PgConnection::connect("postgres://furkancakar:123456@0.0.0.0:5432/furkancakar")
         .await
@@ -67,6 +65,11 @@ async fn main() {
     for rec in imdb_rating{
         println!("{:?}", rec[0])
     }
+
+    print!("{}", color::Fg(color::LightBlue));
+    let rte = movie_movie_id::get_movie::get_movie_details(search_results.results[0].id.to_string()).await;
+    println!("{:?}", rte);
+
 
     
 /*    

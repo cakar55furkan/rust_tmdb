@@ -53,8 +53,7 @@ async fn main() {
         .unwrap();
 
 
-    database_functions::execute_query("insert into title_ratings values ('55', 31.31, 31)", &mut conn);
-
+    database_functions::execute_query( "insert into title_ratings values ('55', 31.31, 31)", &mut conn).await;
 
     let imdb_rating = sqlx::query!("select tconst, numvotes from title_ratings where tconst = 'tt0001963'")
         .fetch_all(&mut conn).await;

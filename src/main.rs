@@ -78,7 +78,8 @@ async fn main() {
                                rte.vote_average.unwrap_or("0.0".parse().unwrap()),
                                rte.vote_count.unwrap_or(0)
     );
-    //println!("{}", my_query);
+
+
     database_functions::execute_query_without_return::execute_query(&mut my_query, &mut conn).await;
     
 /*    

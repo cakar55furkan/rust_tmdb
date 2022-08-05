@@ -1,4 +1,4 @@
-extern crate reqwest;
+use reqwest;
 use std::fs::{create_dir, File};
 use std::path::Path;
 use futures::TryFutureExt;
@@ -67,7 +67,7 @@ async fn main() {
     }
 
 
-    print!("{}", color::Fg(color::LightBlue));
+    print!("{}", color::Fg(color::LightWhite));
     let rte = movie_movie_id::get_movie::get_movie_details(search_results.results[0].id.to_string()).await;
     println!("{:?}", rte);
 

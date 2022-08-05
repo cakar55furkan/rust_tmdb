@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
-pub struct cast_member {
+pub struct credit_cast {
     pub(crate) adult: bool,
     pub(crate) gender: i16,
     pub(crate) id: i32,
@@ -16,7 +16,7 @@ pub struct cast_member {
     pub(crate) order: i32
 }
 #[derive(Debug, Deserialize)]
-pub struct crew_member {
+pub struct credit_crew {
     pub(crate) adult: bool,
     pub(crate) gender: i16,
     pub(crate) id: i32,
@@ -33,6 +33,6 @@ pub struct crew_member {
 #[derive(Debug, Deserialize)]
 pub struct movie_credits{
     pub(crate) id:i32,
-    pub(crate) cast: Vec<cast_member>,
-    pub(crate) crew: Vec<crew_member>
+    pub(crate) cast: Vec<credit_cast>,
+    pub(crate) crew: Vec<credit_crew>
 }

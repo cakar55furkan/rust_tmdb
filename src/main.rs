@@ -23,6 +23,7 @@ mod search_movie_structs;
 mod movie_movie_id;
 mod database_functions;
 mod movie_credist;
+mod people;
 
 #[tokio::main]
 async fn main() {
@@ -85,9 +86,13 @@ async fn main() {
 
     database_functions::execute_query_without_return::execute_query(&mut my_query, &mut conn).await;
     let credits = get_movie_credits(rte.id.to_string()).await;
-    for cast_member in credits.cast{
-        println!("{}\t{}", cast_member.name, cast_member.character.unwrap_or(" ".parse().unwrap()))
+
+    for n in 1..10 //credits.cast.len()
+    {
+        people::get_cast::get_cast_details(credits.cast[n].id).await;
     }
+
+
 
 /*    
     let all_images_of_movie = download_all_images_by_id(&search_results.results[0].id.to_string()).await;

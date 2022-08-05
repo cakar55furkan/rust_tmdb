@@ -66,6 +66,7 @@ async fn main() {
         println!("{:?}", rec[0])
     }
 
+
     print!("{}", color::Fg(color::LightBlue));
     let rte = movie_movie_id::get_movie::get_movie_details(search_results.results[0].id.to_string()).await;
     println!("{:?}", rte);

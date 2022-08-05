@@ -13,6 +13,8 @@ use sqlx;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Connection, PgConnection, Postgres};
 use termion::color;
+use crate::movie_credist::movie_credits::get_movie_credits;
+use crate::movie_credist::movie_credits_structs::movie_credits;
 
 mod download_image;
 mod get_images;
@@ -20,6 +22,7 @@ mod search_movie;
 mod search_movie_structs;
 mod movie_movie_id;
 mod database_functions;
+mod movie_credist;
 
 #[tokio::main]
 async fn main() {
@@ -68,12 +71,12 @@ async fn main() {
                                rte.imdb_id,
                                rte.original_language,
                                rte.original_title,
-                               rte.overview.replace("\'", "\'\'"),
+                               rte.overview.replace("\'", "\'\'").replace("\"", "\"\""),
                                rte.popularity,
                                rte.poster_path,
                                rte.release_date,
                                rte.runtime,
-                               rte.tagline.unwrap_or("".parse().unwrap()).replace("\'", "\\\'"),
+                               rte.tagline.unwrap_or("".parse().unwrap()).replace("\'", "\'\'").replace("\"", "\"\""),
                                rte.title,
                                rte.vote_average.unwrap_or("0.0".parse().unwrap()),
                                rte.vote_count.unwrap_or(0)
@@ -81,7 +84,11 @@ async fn main() {
 
 
     database_functions::execute_query_without_return::execute_query(&mut my_query, &mut conn).await;
-    
+    let credits = get_movie_credits(rte.id.to_string()).await;
+    for cast_member in credits.cast{
+        println!("{}\t{}", cast_member.name, cast_member.character.unwrap_or(" ".parse().unwrap()))
+    }
+
 /*    
     let all_images_of_movie = download_all_images_by_id(&search_results.results[0].id.to_string()).await;
     let mut movie_images_folder = String::from("/Users/furkancakar/Desktop/");

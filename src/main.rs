@@ -16,6 +16,7 @@ mod get_images;
 mod search_movie;
 mod search_movie_structs;
 mod movie_movie_id;
+mod database_functions;
 
 #[tokio::main]
 async fn main() {
@@ -52,12 +53,8 @@ async fn main() {
         .unwrap();
 
 
-    let executable = sqlx::query!("insert into title_ratings values ('31', 31.31, 31)")
-        .execute(&mut conn).await;
-    match executable {
-        Ok(t) => println!("Successfully Inserted Item"),
-        Err(e) => println!("{:?}", e),
-    };
+    database_functions::execute_query("insert into title_ratings values ('55', 31.31, 31)", &mut conn);
+
 
     let imdb_rating = sqlx::query!("select tconst, numvotes from title_ratings where tconst = 'tt0001963'")
         .fetch_all(&mut conn).await;

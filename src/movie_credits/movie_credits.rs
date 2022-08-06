@@ -1,4 +1,4 @@
-use crate::movie_credist::movie_credits_structs::movie_credits;
+use crate::movie_credits::movie_credits_structs::movie_credits;
 
 pub(crate) async fn get_movie_credits(movie_id: String) ->  movie_credits{
     ///   https://api.themoviedb.org/3/movie/1930/credits?api_key=4e110fd06d91f1f01af5acd9fa42a82d&language=en-US

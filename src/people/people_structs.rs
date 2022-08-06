@@ -3,7 +3,7 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 pub struct cast {
     pub(crate) adult: Option<bool>,
-    pub(crate) also_known_as: Option<Vec<String>>,
+    pub(crate) also_known_as: Option<Vec<String>>, // not in DB
     pub(crate) biography: Option<String>,
     pub(crate) birthday:Option<String>,
     pub(crate) deathday:Option<String>,

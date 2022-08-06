@@ -13,9 +13,8 @@ use sqlx;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Connection, PgConnection, Postgres};
 use termion::color;
-use crate::database_functions::execute_query_without_return::insert_movie_to_movie_table;
-use crate::movie_credist::movie_credits::get_movie_credits;
-use crate::movie_credist::movie_credits_structs::movie_credits;
+use crate::database_functions::execute_query_without_return::{insert_cast_person_to_movie_table, insert_movie_to_movie_table};
+use crate::movie_credits::movie_credits::get_movie_credits;
 
 mod download_image;
 mod get_images;
@@ -23,7 +22,7 @@ mod search_movie;
 mod search_movie_structs;
 mod movie_movie_id;
 mod database_functions;
-mod movie_credist;
+mod movie_credits;
 mod people;
 
 #[tokio::main]
@@ -67,13 +66,15 @@ async fn main() {
 
     insert_movie_to_movie_table(&mut rte, &mut conn).await;
 
+//    let credits = get_movie_credits(rte.id.to_string()).await;
     let credits = get_movie_credits(rte.id.to_string()).await;
 
-    for n in 1..10 //credits.cast.len()
+    for n in 0..credits.cast.len()
     {
-        people::get_cast::get_cast_details(credits.cast[n].id).await;
+        let mut cast_people = people::get_cast::get_cast_details(credits.cast[n].id).await;
+        //println!("{}, {}", cast_people.name.unwrap_or(String::from("NONE")), cast_people.place_of_birth.unwrap_or(String::from("NONE")));
+        insert_cast_person_to_movie_table(&mut cast_people, &mut conn).await;
     }
-
 
 
 /*    

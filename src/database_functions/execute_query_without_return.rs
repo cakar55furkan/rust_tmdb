@@ -1,8 +1,9 @@
-use crate::movie_movie_id::get_movie_structs::MovieMovieId;
+use crate::movie_detail::get_movie_structs::MovieMovieId;
 use crate::people::people_structs::cast;
 use sqlx::postgres::PgQueryResult;
 use sqlx::{query, Error, PgConnection};
 use crate::genre::genre_structs::genre;
+use crate::movie_image::image_structs::movie_image;
 
 pub async fn execute_query(passed_query: &str, conn: &mut PgConnection) -> bool {
     let executable = sqlx::query(passed_query).execute(conn).await;
@@ -109,4 +110,21 @@ pub async fn insert_genre_to_genre_movie_table(movie_id: i32, genre_id: i32, con
     println!("{}",my_query);
 
     execute_query(&mut my_query, conn).await
+}
+
+pub async fn insert_image_to_image_table(movie_id: i32, image:movie_image, image_type: &str, conn: &mut PgConnection) -> bool {
+    let mut my_query = format!(
+        "insert into image values ({}, {}, {}, '{}', '{}', {}, {}, {}, '{}')",
+        image.aspect_ratio,
+        image.width,
+        image.height,
+        image.iso_639_1.as_deref().unwrap_or(""),
+        image.file_path,
+        image.vote_average,
+        image.vote_count,
+        movie_id,
+        image_type
+    );
+    println!("{}",my_query);
+    return execute_query(&mut my_query, conn).await
 }

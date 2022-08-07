@@ -7,6 +7,7 @@ pub struct movie_image {
     pub(crate) height: i32,
     pub(crate) file_path:String,
     pub(crate) vote_count: i32,
+    pub(crate) vote_average: f32,
     pub(crate) iso_639_1: Option<String>,
 }
 

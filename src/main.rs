@@ -12,13 +12,19 @@ use sqlx;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Connection, PgConnection, Postgres};
 use termion::color;
-use crate::database_functions::execute_query_without_return::{insert_cast_person_to_movie_table, insert_movie_to_movie_table, insert_movie_cast_to_movie_cast_table, insert_genre_to_genre_table, insert_genre_to_genre_movie_table};
+use crate::database_functions::execute_query_without_return::{insert_cast_person_to_movie_table,
+                                                              insert_movie_to_movie_table,
+                                                              insert_movie_cast_to_movie_cast_table,
+                                                              insert_genre_to_genre_table,
+                                                              insert_genre_to_genre_movie_table,
+                                                              insert_image_to_image_table};
+
 use crate::movie_credits::movie_credits::get_movie_credits;
 use crate::movie_image::images::get_movie_images;
 
 mod search_movie;
 mod search_movie_structs;
-mod movie_movie_id;
+mod movie_detail;
 mod database_functions;
 mod movie_credits;
 mod people;
@@ -62,7 +68,7 @@ async fn main() {
     */
 
 
-    let mut rte = movie_movie_id::get_movie::get_movie_details(search_results.results[0].id.to_string()).await;
+    let mut rte = movie_detail::get_movie::get_movie_details(search_results.results[0].id.to_string()).await;
 
     insert_movie_to_movie_table(&mut rte, &mut conn).await;
 
@@ -103,7 +109,15 @@ async fn main() {
     let mut image_json = get_movie_images(rte.id).await;
 
     for backdrop_image in image_json.backdrops{
-        println!()
+        //println!("{}", backdrop_image.file_path);
+        //call database insert function
+        insert_image_to_image_table(rte.id, backdrop_image, "backdrop", &mut conn).await;
+    }
+    for poster_image in image_json.posters{
+        insert_image_to_image_table(rte.id, poster_image, "poster", &mut conn).await;
+    }
+    for logo in image_json.logos{
+        insert_image_to_image_table(rte.id, logo, "logo", &mut conn).await;
     }
 
     // then, insert it into database

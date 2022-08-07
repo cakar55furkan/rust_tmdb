@@ -1,4 +1,4 @@
-use crate::movie_movie_id::get_movie_structs::MovieMovieId;
+use crate::movie_detail::get_movie_structs::MovieMovieId;
 
 pub(crate) async fn get_movie_details(movie_tmdb_id: String) -> MovieMovieId {
     let mut movie_url = String::from("https://api.themoviedb.org/3/movie/");

@@ -6,16 +6,14 @@ use sqlx::{query, Error, PgConnection};
 pub async fn execute_query(passed_query: &str, conn: &mut PgConnection) -> bool {
     let executable = sqlx::query(passed_query).execute(conn).await;
     match executable {
-        Ok(query_result) => {
-            println!(
-                "Inserted successfully!\nAffected rows:{}",
-                query_result.rows_affected()
-            );
+        Ok(_) => {
             return true;
         }
         Err(e) => {
             println!("Couldn't insert to database!");
+            println!("{}", passed_query);
             println!("{:?}", e);
+            println!("=======================================================");
             return false;
         }
     }
@@ -81,4 +79,20 @@ pub async fn insert_cast_person_to_movie_table(cast_object: &cast, conn: &mut Pg
     );
     //println!("{}",my_query);
     execute_query(&mut my_query, conn).await;
+}
+
+pub async fn insert_movie_cast_to_movie_cast_table(person_id:i32, movie_id:i32, character:&str, ordering: i32, conn: &mut PgConnection) -> bool {
+    let mut my_query = format!(
+        "insert into movie_cast values ({},{},'{}',{})",
+        person_id,
+        movie_id,
+        character
+            .replace("\'", "\'\'")
+            .replace("\"", "\"\""),
+        ordering
+    );
+    //println!("{}",my_query);
+    return execute_query(&mut my_query, conn).await;
+
+
 }

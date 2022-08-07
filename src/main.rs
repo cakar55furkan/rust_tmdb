@@ -13,7 +13,7 @@ use sqlx;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Connection, PgConnection, Postgres};
 use termion::color;
-use crate::database_functions::execute_query_without_return::{insert_cast_person_to_movie_table, insert_movie_to_movie_table};
+use crate::database_functions::execute_query_without_return::{insert_cast_person_to_movie_table, insert_movie_to_movie_table, insert_movie_cast_to_movie_cast_table};
 use crate::movie_credits::movie_credits::get_movie_credits;
 
 mod download_image;
@@ -68,13 +68,29 @@ async fn main() {
 
 //    let credits = get_movie_credits(rte.id.to_string()).await;
     let credits = get_movie_credits(rte.id.to_string()).await;
-
+    let mut successfully_inserted_cast = 0;
+    let mut unsuccessfully_inserted_cast = 0;
     for n in 0..credits.cast.len()
     {
         let mut cast_people = people::get_cast::get_cast_details(credits.cast[n].id).await;
         //println!("{}, {}", cast_people.name.unwrap_or(String::from("NONE")), cast_people.place_of_birth.unwrap_or(String::from("NONE")));
         insert_cast_person_to_movie_table(&mut cast_people, &mut conn).await;
+        // insert to movie_cast table
+        let person_id = cast_people.id.unwrap_or(0);
+        let movie_id = rte.id;
+        let character = credits.cast[n].character.as_deref().unwrap_or("");
+        let ordering = credits.cast[n].order;
+
+        if insert_movie_cast_to_movie_cast_table(person_id, movie_id, character, ordering, &mut conn).await {
+            successfully_inserted_cast += 1;
+        }
+        else {
+            unsuccessfully_inserted_cast += 1;
+        }
+        //println!("{}, {}, {}, {}", person_id, movie_id, character, ordering);
     }
+    println!("Number of Successful insert: {}", successfully_inserted_cast);
+    println!("Number of Unsuccessful insert: {}", unsuccessfully_inserted_cast);
 
 
 /*    

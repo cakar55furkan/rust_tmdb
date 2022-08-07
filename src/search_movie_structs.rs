@@ -24,12 +24,5 @@ pub struct MovieGetImageImageObject{
     pub(crate) file_path: String,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct MovieGetImage{
-    pub(crate) id: i32,
-    pub(crate) backdrops :Vec<MovieGetImageImageObject>,
-    pub(crate) logos :Vec<MovieGetImageImageObject>,
-    pub(crate) posters :Vec<MovieGetImageImageObject>,
-}
 
 

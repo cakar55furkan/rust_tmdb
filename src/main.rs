@@ -5,7 +5,6 @@ use std::path::Path;
 use futures::TryFutureExt;
 use std::env;
 use std::fmt::format;
-use crate::get_images::download_all_images_by_id;
 use crate::search_movie::search_movie;
 use crate::search_movie_structs::{SearchMovie, SearchMovieResultObject};
 use serde::Deserialize;
@@ -15,9 +14,8 @@ use sqlx::{Connection, PgConnection, Postgres};
 use termion::color;
 use crate::database_functions::execute_query_without_return::{insert_cast_person_to_movie_table, insert_movie_to_movie_table, insert_movie_cast_to_movie_cast_table, insert_genre_to_genre_table, insert_genre_to_genre_movie_table};
 use crate::movie_credits::movie_credits::get_movie_credits;
+use crate::movie_image::images::get_movie_images;
 
-mod download_image;
-mod get_images;
 mod search_movie;
 mod search_movie_structs;
 mod movie_movie_id;
@@ -25,7 +23,7 @@ mod database_functions;
 mod movie_credits;
 mod people;
 mod genre;
-mod image;
+mod movie_image;
 
 #[tokio::main]
 async fn main() {
@@ -101,6 +99,14 @@ async fn main() {
             insert_genre_to_genre_movie_table(rte.id, genre.id, &mut conn).await;
         }
     }
+    // call images and parse the json
+    let mut image_json = get_movie_images(rte.id).await;
+
+    for backdrop_image in image_json.backdrops{
+        println!()
+    }
+
+    // then, insert it into database
 
 /*    
     let all_images_of_movie = download_all_images_by_id(&search_results.results[0].id.to_string()).await;

@@ -2,6 +2,7 @@ use crate::movie_movie_id::get_movie_structs::MovieMovieId;
 use crate::people::people_structs::cast;
 use sqlx::postgres::PgQueryResult;
 use sqlx::{query, Error, PgConnection};
+use crate::genre::genre_structs::genre;
 
 pub async fn execute_query(passed_query: &str, conn: &mut PgConnection) -> bool {
     let executable = sqlx::query(passed_query).execute(conn).await;
@@ -93,6 +94,19 @@ pub async fn insert_movie_cast_to_movie_cast_table(person_id:i32, movie_id:i32, 
     );
     //println!("{}",my_query);
     return execute_query(&mut my_query, conn).await;
+}
 
+pub async fn insert_genre_to_genre_table(id: i32, name:&str, conn: &mut PgConnection) -> bool {
+    let mut my_query = format!(
+        "insert into genre values ({},'{}')", id, String::from(name));
+    //println!("{}",my_query);
+    execute_query(&mut my_query, conn).await
+}
 
+pub async fn insert_genre_to_genre_movie_table(movie_id: i32, genre_id: i32, conn: &mut PgConnection) -> bool {
+    let mut my_query = format!(
+        "insert into movie_genre values ({},'{}')", movie_id, genre_id);
+    println!("{}",my_query);
+
+    execute_query(&mut my_query, conn).await
 }

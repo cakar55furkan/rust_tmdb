@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use crate::genre::genre_structs;
 
 #[derive(Debug, Deserialize)]
 pub struct MovieMovieId {
@@ -6,6 +7,7 @@ pub struct MovieMovieId {
     pub(crate) adult: bool,
     pub(crate) budget: i64,
     //genres
+    pub(crate) genres: Option<Vec<genre_structs::genre>>,
     pub(crate) id: i32,
     pub(crate) imdb_id: String,
     pub(crate) original_language: String,

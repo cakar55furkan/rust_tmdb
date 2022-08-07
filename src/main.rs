@@ -13,7 +13,7 @@ use sqlx;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Connection, PgConnection, Postgres};
 use termion::color;
-use crate::database_functions::execute_query_without_return::{insert_cast_person_to_movie_table, insert_movie_to_movie_table, insert_movie_cast_to_movie_cast_table};
+use crate::database_functions::execute_query_without_return::{insert_cast_person_to_movie_table, insert_movie_to_movie_table, insert_movie_cast_to_movie_cast_table, insert_genre_to_genre_table, insert_genre_to_genre_movie_table};
 use crate::movie_credits::movie_credits::get_movie_credits;
 
 mod download_image;
@@ -24,6 +24,8 @@ mod movie_movie_id;
 mod database_functions;
 mod movie_credits;
 mod people;
+mod genre;
+mod image;
 
 #[tokio::main]
 async fn main() {
@@ -92,6 +94,13 @@ async fn main() {
     println!("Number of Successful insert: {}", successfully_inserted_cast);
     println!("Number of Unsuccessful insert: {}", unsuccessfully_inserted_cast);
 
+    if rte.genres.as_ref().unwrap().len() != 0 {
+        for genre in rte.genres.unwrap(){
+            //println!("{:?}", genre);
+            insert_genre_to_genre_table(genre.id, &*genre.name, &mut conn).await;
+            insert_genre_to_genre_movie_table(rte.id, genre.id, &mut conn).await;
+        }
+    }
 
 /*    
     let all_images_of_movie = download_all_images_by_id(&search_results.results[0].id.to_string()).await;

@@ -1,7 +1,9 @@
+use std::cmp;
 use crate::movie_detail::get_movie_structs::MovieMovieId;
 use crate::people::people_structs::cast;
 use sqlx::postgres::PgQueryResult;
 use sqlx::{query, Error, PgConnection};
+use termion::color;
 use crate::genre::genre_structs::genre;
 use crate::movie_image::image_structs::movie_image;
 
@@ -9,13 +11,15 @@ pub async fn execute_query(passed_query: &str, conn: &mut PgConnection) -> bool 
     let executable = sqlx::query(passed_query).execute(conn).await;
     match executable {
         Ok(_) => {
+            print!("{}", color::Fg(color::LightGreen));
+            println!("[SUCCESS]\t{}", String::from(&passed_query[..cmp::min(75, passed_query.len())]) + "...");
+            print!("{}", color::Fg(color::Reset));
             return true;
         }
         Err(e) => {
-            println!("Couldn't insert to database!");
-            println!("{}", passed_query);
-            println!("{:?}", e);
-            println!("=======================================================");
+            print!("{}", color::Fg(color::LightRed));
+            println!("[ERROR]\t{}", String::from(&passed_query[..cmp::min(75, passed_query.len())]) + "...");
+            print!("{}", color::Fg(color::Reset));
             return false;
         }
     }
@@ -41,6 +45,11 @@ pub async fn insert_movie_to_movie_table(movie_object: &MovieMovieId, conn: &mut
                                movie_object.vote_count.unwrap_or(0)
     );
 
+    print!("{}", color::Fg(color::LightWhite));
+    print!("{}","");
+    println!("Movie Insert: {}====================================", movie_object.title);
+    print!("{}", color::Bg(color::Reset));
+    print!("{}", color::Fg(color::Reset));
     execute_query(&mut my_query, conn).await;
 }
 
@@ -50,7 +59,9 @@ pub async fn insert_cast_person_to_movie_table(cast_object: &cast, conn: &mut Pg
         cast_object.adult.unwrap_or("false".parse().unwrap()),
         cast_object.biography.as_deref().unwrap_or("")
             .replace("\'", "\'\'")
-            .replace("\"", "\"\""),
+            .replace("\"", "\"\"")
+            .replace("ː", ":")
+            .replace("ˌ", ","),
         cast_object.birthday.as_deref().unwrap_or("1970-01-01")
             .replace("\'", "\'\'")
             .replace("\"", "\"\""),
@@ -79,11 +90,11 @@ pub async fn insert_cast_person_to_movie_table(cast_object: &cast, conn: &mut Pg
             .replace("\'", "\'\'")
             .replace("\"", "\"\"")
     );
-    //println!("{}",my_query);
     execute_query(&mut my_query, conn).await;
+
 }
 
-pub async fn insert_movie_cast_to_movie_cast_table(person_id:i32, movie_id:i32, character:&str, ordering: i32, conn: &mut PgConnection) -> bool {
+pub async fn insert_movie_cast_to_movie_cast_table(person_id:i32, movie_id:i32, character:&str, ordering: i32, conn: &mut PgConnection)  {
     let mut my_query = format!(
         "insert into movie_cast values ({},{},'{}',{})",
         person_id,
@@ -93,21 +104,18 @@ pub async fn insert_movie_cast_to_movie_cast_table(person_id:i32, movie_id:i32, 
             .replace("\"", "\"\""),
         ordering
     );
-    //println!("{}",my_query);
-    return execute_query(&mut my_query, conn).await;
+    execute_query(&mut my_query, conn).await;
 }
 
 pub async fn insert_genre_to_genre_table(id: i32, name:&str, conn: &mut PgConnection) -> bool {
     let mut my_query = format!(
         "insert into genre values ({},'{}')", id, String::from(name));
-    //println!("{}",my_query);
     execute_query(&mut my_query, conn).await
 }
 
 pub async fn insert_genre_to_genre_movie_table(movie_id: i32, genre_id: i32, conn: &mut PgConnection) -> bool {
     let mut my_query = format!(
         "insert into movie_genre values ({},'{}')", movie_id, genre_id);
-    println!("{}",my_query);
 
     execute_query(&mut my_query, conn).await
 }
@@ -125,6 +133,5 @@ pub async fn insert_image_to_image_table(movie_id: i32, image:movie_image, image
         movie_id,
         image_type
     );
-    println!("{}",my_query);
     return execute_query(&mut my_query, conn).await
 }

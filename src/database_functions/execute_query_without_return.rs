@@ -9,6 +9,10 @@ use crate::movie_image::image_structs::movie_image;
 
 pub async fn execute_query(passed_query: &str, conn: &mut PgConnection) -> bool {
     let executable = sqlx::query(passed_query).execute(conn).await;
+    let my_vec: Vec<char> = passed_query.chars().collect();
+    if my_vec.len() > 75 {
+        println!("my_vec[75]: {}", my_vec[75]);
+    }
     match executable {
         Ok(_) => {
             print!("{}", color::Fg(color::LightGreen));

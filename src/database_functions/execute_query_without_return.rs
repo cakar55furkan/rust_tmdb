@@ -1,4 +1,5 @@
 use std::cmp;
+use futures::StreamExt;
 use crate::movie_detail::get_movie_structs::MovieMovieId;
 use crate::people::people_structs::cast;
 use sqlx::postgres::PgQueryResult;
@@ -9,20 +10,16 @@ use crate::movie_image::image_structs::movie_image;
 
 pub async fn execute_query(passed_query: &str, conn: &mut PgConnection) -> bool {
     let executable = sqlx::query(passed_query).execute(conn).await;
-    let my_vec: Vec<char> = passed_query.chars().collect();
-    if my_vec.len() > 75 {
-        println!("my_vec[75]: {}", my_vec[75]);
-    }
     match executable {
-        Ok(_) => {
+        Ok(o) => {
             print!("{}", color::Fg(color::LightGreen));
-            println!("[SUCCESS]\t{}", String::from(&passed_query[..cmp::min(75, passed_query.len())]) + "...");
+            println!("[SUCCESS]\t{:?}", &passed_query);
             print!("{}", color::Fg(color::Reset));
             return true;
         }
         Err(e) => {
             print!("{}", color::Fg(color::LightRed));
-            println!("[ERROR]\t{}", String::from(&passed_query[..cmp::min(75, passed_query.len())]) + "...");
+            println!("[ERROR]\t{:?}", e);
             print!("{}", color::Fg(color::Reset));
             return false;
         }

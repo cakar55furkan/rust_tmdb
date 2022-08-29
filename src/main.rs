@@ -11,8 +11,8 @@ use crate::search_movie::search_movie;
 use crate::search_movie_structs::{SearchMovie, SearchMovieResultObject};
 use serde::Deserialize;
 use sqlx;
-use sqlx::postgres::PgPoolOptions;
-use sqlx::{Connection, PgConnection, Postgres, Row};
+use sqlx::postgres::{PgPoolOptions, PgRow};
+use sqlx::{Connection, PgConnection, PgPool, Pool, Postgres, Row};
 use crate::database_functions::execute_query_without_return::{insert_cast_person_to_movie_table,
                                                               insert_movie_to_movie_table,
                                                               insert_movie_cast_to_movie_cast_table,
@@ -43,8 +43,18 @@ async fn main() {
 
     let string_array = data.split("\n");
     for line in string_array{
-        search_fetch(String::from(line)).await;
+        //search_fetch(String::from(line)).await;
     }
+
+    let mut pool = Pool::connect("postgres://furkancakar:123456@0.0.0.0:5432/furkancakar")
+        .await
+        .unwrap();
+
+    let mut elem = sqlx::query!("SELECT id, title FROM movie")
+        .fetch_all(&pool)
+        .await;
+
+
 }
 
 

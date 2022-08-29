@@ -13,7 +13,7 @@ pub async fn execute_query(passed_query: &str, conn: &mut PgConnection) -> bool 
     match executable {
         Ok(o) => {
             print!("{}", color::Fg(color::LightGreen));
-            println!("[SUCCESS]\t{:?}", &passed_query);
+            println!("[SUCCESS]\t{}", String::from(&passed_query[..cmp::min(25, passed_query.len())]) + "...");
             print!("{}", color::Fg(color::Reset));
             return true;
         }

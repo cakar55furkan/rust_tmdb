@@ -48,10 +48,10 @@ async fn main() {
 }
 
 
-async fn search_fetch (search_q: String) {
-
-    let mut user_input_query = search_q.trim().parse().unwrap();
-    let mut search_results = search_movie(user_input_query).await;
+async fn search_fetch (movie_id: String) {
+    //
+    // let mut user_input_query = movie_id.trim().parse().unwrap();
+    // let mut search_results = search_movie(user_input_query).await;
 
     let mut conn = PgConnection::connect("postgres://furkancakar:123456@0.0.0.0:5432/furkancakar")
         .await
@@ -60,7 +60,7 @@ async fn search_fetch (search_q: String) {
     //let check_unique_movie_query = format!("select if from movie where id = {}", search_results.results[0].id.to_string());
 
 
-    let mut rte = movie_detail::get_movie::get_movie_details(search_results.results[0].id.to_string()).await;
+    let mut rte = movie_detail::get_movie::get_movie_details(movie_id).await;
 
     insert_movie_to_movie_table(&mut rte, &mut conn).await;
 
